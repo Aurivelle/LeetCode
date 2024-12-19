@@ -8,15 +8,21 @@ int max(int a, int b)
 }
 int maxArea(int* height, int heightSize) 
 {
+    int left = 0;
+    int right = heightSize - 1;
     int ret = INT_MIN;
-    for(int i = 0; i < heightSize; i++)
+    while(left < right)
     {
-        for(int j = heightSize - 1; j > i; j--)
+        int min_height = min(height[left], height[right]);
+        ret = max(ret, min_height * (right - left));
+        if(height[left] > height[right])
         {
-            int min_height = min(height[i], height[j]);
-            ret = max(ret, min_height * (j - i));
+            right--;
         }
-        
+        else
+        {
+            left++;
+        }
     }
     return ret;
 }
