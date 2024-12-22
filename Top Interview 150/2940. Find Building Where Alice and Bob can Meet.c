@@ -1,8 +1,23 @@
- /**
+/**
  * Note: The returned array must be malloced, assume caller calls free().
  */
 int* leftmostBuildingQueries(int* heights, int heightsSize, int** queries, int queriesSize, int* queriesColSize, int* returnSize) 
 {
+    int* stack = (int*)malloc(sizeof(int) * heightsSize);
+    int* nextHigher = (int*)malloc(sizeof(int) * heightsSize);
+    int top = -1;
+   
+    for(int i = heightsSize - 1; i >= 0; i--)
+    {
+        while(top >= 0 && heights[stack[top]] <= heights[i])
+        {
+            top--;
+        }
+        nextHigher[i] = (top >= 0)? stack[top] : -1;
+        stack[++top] = i;
+    }
+    free(stack);
+
     *returnSize = queriesSize;
     int* ret = (int*)malloc(sizeof(int) * *returnSize);
     for(int i = 0; i < queriesSize; i++)
@@ -22,16 +37,15 @@ int* leftmostBuildingQueries(int* heights, int heightsSize, int** queries, int q
         }
         else
         {
-            for(int j = Bob + 1; j < heightsSize; j++)
+            int current = Bob;
+            while(current != -1 && heights[current] <= heights[Alice])
             {
-                if(heights[j] > heights[Alice])
-                {
-                    ret[i] = j;
-                    break;
-                }
+                current = nextHigher[current];
             }
+            ret[i] = current;
         }
     }
+    free(nextHigher);
     return ret;
 
 }
