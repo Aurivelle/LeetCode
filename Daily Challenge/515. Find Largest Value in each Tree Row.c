@@ -37,9 +37,8 @@ int* largestValues(struct TreeNode* root, int* returnSize)
 {
     if(root == NULL)
     {
-        int* answer = (int*)malloc(sizeof(int));
         *returnSize = 0;
-        return answer;
+        return NULL;
     }
     int capacity = 16;
     struct TreeNode** queue = createQueue(capacity);
@@ -52,14 +51,15 @@ int* largestValues(struct TreeNode* root, int* returnSize)
     while(front < rear)
     {
         int size = rear - front;
-        int* values = (int*)malloc(sizeof(int) *size);
-        int index = 0;
-
+        int max = INT_MIN;
         for(int i = 0; i < size; i++)
         {
             struct TreeNode* node = dequeue(queue, &front);
-            values[index] = node->val;
-            index++;
+            if(node->val > max)
+            {
+                max = node->val;
+            }
+            
 
             if(node->left)
             {
@@ -70,17 +70,7 @@ int* largestValues(struct TreeNode* root, int* returnSize)
                 enqueue(&queue, &rear, &capacity, node->right);
             }
         }
-        int max = INT_MIN;
-        for(int i = 0; i < size; i++)
-        {
-            if(values[i] > max)
-            {
-                max = values[i];
-            }
-        }
         answer[(*returnSize)++] = max;
-        free(values);
-
     }
     free(queue);
     return answer;
