@@ -1,16 +1,21 @@
+int max(int a, int b)
+{
+    return a > b ? a : b;
+}
 int maxScoreSightseeingPair(int* values, int valuesSize)
 {
-    int max = INT_MIN;
-    for(int i = 0; i < valuesSize - 1; i++)
+    int prev = values[valuesSize - 1] - (valuesSize - 1);
+    int cur = INT_MIN;
+    int maxx = INT_MIN;
+    for(int i = valuesSize - 2; i >= 0; i--)
     {
-        for(int j = i + 1; j < valuesSize; j++)
+        cur = max(prev, cur);
+        prev = values[i] - i;
+        int score = values[i] + i + cur;
+        if(score > maxx)
         {
-            int score = values[i] + values[j] + i - j;
-            if(score > max)
-            {
-                max = score;
-            }
+            maxx = score;
         }
     }
-    return max;    
+    return maxx;
 }
