@@ -1,15 +1,87 @@
-void dfs(char** grid, int r, int c, int row, int column)
+typedef struct
 {
-    if(r < 0 || r >= row || c < 0 || c >= column || grid[r][c] == '0')
+    int x;
+    int y;
+}Point;
+
+typedef struct
+{
+    Point* data;
+    int front;
+    int rear;
+    int size;
+    int capacity;
+}Queue;
+
+Queue* createQueue(int capacity)
+{
+    Queue* queue = (Queue*)malloc(sizeof(Queue));
+    queue->data = (Point*)malloc(sizeof(Point) * capacity);
+    queue->front = 0;
+    queue->rear = 0;
+    queue->size = 0;
+    queue->capacity = capacity;
+    return queue;
+}
+int isEmpty(Queue* queue)
+{
+    return queue->size == 0;
+}
+
+void enqueue(Queue* queue, Point p)
+{
+    if(queue->size == queue->capacity)
     {
         return;
     }
+    queue->data[queue->rear] = p;
+    queue->rear = (queue->rear + 1) % queue->capacity;
+    queue->size++;
+}
 
+Point dequeue(Queue* queue)
+{
+    if(isEmpty(queue))
+    {
+        return (Point){-1, -1};
+    }
+
+    Point p = queue->data[queue->front];
+    queue->front = (queue->front + 1) % queue->capacity;
+    queue->size--;
+    return p;
+}
+
+void bfs(char** grid, int r, int c, int row, int column)
+{
+    int directions[4][2] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+    Queue* queue = createQueue(row * column);
+    enqueue(queue, (Point){r, c});
     grid[r][c] = '0';
-    dfs(grid, r + 1, c, row, column);
-    dfs(grid, r, c + 1, row, column);
-    dfs(grid, r - 1, c, row, column);
-    dfs(grid, r, c - 1, row, column);
+    while(!isEmpty(queue))
+    {
+        Point p = dequeue(queue);
+        int x = p.x;
+        int y = p.y;
+        
+
+        for(int i = 0; i < 4; i++)
+        {
+            int newx = x + directions[i][0];
+            int newy = y + directions[i][1];
+            if(newx >= 0 && newx < row && newy >= 0 && newy < column && grid[newx][newy] == '1')
+            {
+                grid[newx][newy] = '0';
+                enqueue(queue, (Point){newx, newy});
+            }
+            
+        }
+        
+
+    }
+    free(queue->data);
+    free(queue);
+    
 }
 int numIslands(char** grid, int gridSize, int* gridColSize) 
 {
@@ -29,7 +101,7 @@ int numIslands(char** grid, int gridSize, int* gridColSize)
             if(grid[i][j] == '1')
             {
                 count++;
-                dfs(grid, i, j, row, column);
+                bfs(grid, i, j, row, column);
             }
         }
     }
