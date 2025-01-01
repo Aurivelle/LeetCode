@@ -16,14 +16,14 @@ int maxScore(char* s)
             return 0;
         }
     }
-    int zero[len];
+    int zero;
     if(s[0] == '0')
     {
-        zero[0] = 1;
+        zero = 1;
     }
     else
     {
-        zero[0] = 0;
+        zero = 0;
     }
     int one[len];
     if(s[len - 1] == '1')
@@ -35,17 +35,6 @@ int maxScore(char* s)
         one[len - 1] = 0;
     }
 
-    for(int i = 1; i < len; i++)
-    {
-        if(s[i] == '0')
-        {
-            zero[i] = zero[i - 1] + 1;
-        }
-        else
-        {
-            zero[i] = zero[i - 1];
-        }
-    }
     for(int i = len - 2; i >= 0; i--)
     {
         if(s[i] == '1')
@@ -61,7 +50,11 @@ int maxScore(char* s)
     int max = 0;
     for(int i = 1; i < len - 1; i++)
     {
-        int sum = zero[i] + one[i];
+        if(s[i] == '0')
+        {
+            zero++;
+        }
+        int sum = zero + one[i];
         if(sum > max)
         {
             max = sum;
