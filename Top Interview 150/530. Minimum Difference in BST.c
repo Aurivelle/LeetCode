@@ -7,34 +7,31 @@
  * };
  */
 int min = INT_MAX;
-void InorderTraversal(struct TreeNode* node, int* array, int* count)
+int prev = -1;
+void InorderTraversal(struct TreeNode* node)
 {
-    if(node->left)
+    if(node == NULL)
     {
-        InorderTraversal(node->left, array, count);
+        return;
     }
-
-    array[(*count)++] = node->val;
-
-    if(node->right)
+    
+    InorderTraversal(node->left);
+    if(prev != -1)
     {
-        InorderTraversal(node->right, array, count);
+        if(abs(node->val - prev) < min)
+        {
+            min = abs(node->val - prev);
+        }
     }
+    prev = node->val;
+    InorderTraversal(node->right);
+    
 
 }
 int getMinimumDifference(struct TreeNode* root) 
 {
-    int array[100000];
-    int count = 0;
-    InorderTraversal(root, array, &count);
-    int min = INT_MAX;
-    for(int i = 1; i < count; i++)
-    {
-        int diff = array[i] - array[i - 1];
-        if(diff < min)
-        {
-            min = diff;
-        }
-    }
+    min = INT_MAX;
+    prev = -1;
+    InorderTraversal(root);
     return min;
 }
