@@ -1,40 +1,31 @@
 int longestMonotonicSubarray(int* nums, int numsSize) 
 {
-    int max = 1;
-    int head = 0;
+    int inc = 1;
+    int dec = 1;
+    int max = 0;
     for(int i = 0; i < numsSize - 1; i++)
     {
         if(nums[i] > nums[i + 1])
         {
-            
-            if(i == numsSize - 2)
-            {
-                max = max > i - head + 2? max : i - head + 2;
-            }
-            continue;
+            inc++;
+            max = dec > max ? dec : max;
+            dec = 1;
+        }
+        else if(nums[i] < nums[i + 1])
+        {
+            dec++;
+            max = inc > max ? inc : max;
+            inc = 1;
         }
         else
         {
-            max = max > i - head + 1? max : i - head + 1;
-            head = i + 1;
+            max = inc > max ? inc : max;
+            max = dec > max ? dec : max;
+            inc = 1;
+            dec = 1;
         }
     }
-    head = 0;
-    for(int i = 0; i < numsSize - 1; i++)
-    {
-        if(nums[i] < nums[i + 1])
-        {
-            if(i == numsSize - 2)
-            {
-                max = max > i - head + 2? max : i - head + 2;
-            }
-            continue;
-        }
-        else
-        {
-            max = max > i - head + 1? max : i - head + 1;
-            head = i + 1;
-        }
-    }
+    max = inc > max ? inc : max;
+    max = dec > max ? dec : max;
     return max;
 }
