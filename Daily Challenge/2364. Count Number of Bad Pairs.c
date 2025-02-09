@@ -1,30 +1,39 @@
-int cmp(const void* a, const void* b)
+typedef struct
 {
-    return *(int*)a - *(int*)b;
-}
+    int key;
+    int count;
+    UT_hash_handle hh;
+} HashMap;
 long long countBadPairs(int* nums, int numsSize) 
 {
+    HashMap* freq_map = NULL;
+    long long good_pairs = 0;
     for(int i = 0; i < numsSize; i++)
     {
-        nums[i] = nums[i] - i;
-    }
-    qsort(nums, numsSize, sizeof(int), cmp);
-    int same_Num = 1;
-    long long count = 0;
-    for(int i = 0; i < numsSize - 1; i++)
-    {
-        if(nums[i] == nums[i + 1])
+        int key = nums[i] - i;
+        HashMap* entry;
+        HASH_FIND_INT(freq_map, &key, entry);
+
+        if(entry)
         {
-            same_Num++;
+            good_pairs += entry->count;
+            entry->count++;
         }
         else
         {
-            count += same_Num * (same_Num - 1) / 2;
-            same_Num = 1;
+            entry = (HashMap*)malloc(sizeof(HashMap));
+            entry->key = key;
+            entry->count = 1;
+            HASH_ADD_INT(freq_map, key, entry);
         }
     }
-    count += (long long)same_Num * ((long long)same_Num - 1) / (long long)2;
-    return ((long long)numsSize * (long long)(numsSize - 1) / (long long)2) - (long long)count;
-
-
+    HashMap* current;
+    HashMap* tmp;
+    HASH_ITER(hh, freq_map, current, tmp)
+    {
+        HASH_DEL(freq_map, current);
+        free(current);
+    }
+    long long total_pairs = (long long)numsSize * (long long)(numsSize - 1) / 2;
+    return total_pairs - good_pairs;
 }
