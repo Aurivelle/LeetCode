@@ -1,11 +1,18 @@
 char* removeOccurrences(char* s, char* part) 
 {
-    char* pos = NULL;
-    int len = strlen(part);
+    int len_s = strlen(s);
+    int len_part = strlen(part);
+    char* result = (char*)malloc(sizeof(char) * (len_s + 1));
+    int index = 0;
 
-    while((pos = strstr(s, part)) != NULL)
+    for(int i = 0; i < len_s; i++)
     {
-        memmove(pos, pos + len, strlen(pos + len) + 1);
+        result[index++] = s[i];
+        if(index >= len_part && strncmp(result + index - len_part, part, len_part) == 0)
+        {
+            index -= len_part;
+        }
     }
-    return s;
+    result[index] = '\0';
+    return result;
 }
