@@ -1,38 +1,33 @@
 class Solution {
 public:
     int minimumDeletions(string word, int k) {
-        int freq[26] = {0};
-        int len = word.length();
-        for(int i = 0; i < len; i++)
+        std::array<int, 26> freq = {0};
+        for(char c : word)
         {
-            freq[word[i] - 'a']++;
+            freq[c - 'a']++;
         }
-        int min = INT_MAX;
-        for(int i = 0; i < 26; i++)
+        int minimum = std::numeric_limits<int>::max();
+        for(int base : freq)
         {
-            int sum = 0;
-            if(freq[i] == 0)
+            if(base == 0)
             {
                 continue;
             }
-            for(int j = 0; j < 26; j++)
+            int deletion = 0;
+            for(int f : freq)
             {
-                if(freq[j] < freq[i])
+                if(f < base)
                 {
-                    sum += freq[j];
+                    deletion += f;
                 }
-                else if(freq[j] > freq[i] + k)
+                else if(f > base + k)
                 {
-                    sum += freq[j] - freq[i] - k;
+                    deletion += f - base - k;
                 }
             }
-            if(sum < min)
-            {
-                min = sum;
-            }
-            
+            minimum = std::min(minimum, deletion);
         }
-        return min;
+        return minimum;
         
     }
 };
