@@ -2,28 +2,24 @@ class Solution {
 public:
     vector<int> findKDistantIndices(vector<int>& nums, int key, int k) 
     {
+        vector<bool> seen(nums.size(), false);
         vector<int> ans;
         for(int i = 0; i < nums.size(); ++i)
         {
             if(nums[i] == key)
             {
-                for(int j = i - 1; j >= 0 && i - j <= k; --j)
+                int left = max(0, i - k);
+                int right = min((int)nums.size() - 1, i + k);
+                for(int j = left; j <= right; ++j)
                 {
-                    if(std::find(ans.begin(), ans.end(), j) == ans.end())
+                    if(!seen[j])
                     {
-                        ans.push_back(j);
-                    }
-                }
-                for(int j = i; j < nums.size() && j - i <= k; ++j)
-                {
-                    if(std::find(ans.begin(), ans.end(), j) == ans.end())
-                    {
+                        seen[j] = true;
                         ans.push_back(j);
                     }
                 }
             }
         }
-        sort(ans.begin(), ans.end());
         return ans;
 
     }
