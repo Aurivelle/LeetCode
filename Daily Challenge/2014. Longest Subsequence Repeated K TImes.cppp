@@ -1,0 +1,73 @@
+class Solution {
+    string s;
+    int k, n;
+    string best;
+    vector<char> letters;
+
+    bool repeatedKTimes(const string& seq)
+    {
+        int pos = 0;
+        for(int t = 0; t < k; ++t)
+        {
+            for(char c : seq)
+            {
+                while(pos < n && s[pos] != c)
+                {
+                    ++pos;
+                }
+                if(pos == n)
+                {
+                    return false;
+                }
+                ++pos;
+            }
+        }
+        return true;
+    }
+
+    void dfs(string& cur)
+    {
+        if(cur.size() > best.size() || (cur.size() == best.size() && cur > best))
+        {
+            best = cur;
+        }
+        if(cur.size() == n / k)
+        {
+            return;
+        }
+        for(char c : letters)
+        {
+            cur.push_back(c);
+            if(repeatedKTimes(cur))
+            {
+                dfs(cur);
+            }
+            cur.pop_back();
+        }
+    }
+public:
+    string longestSubsequenceRepeatedK(string _s, int _k) 
+    {
+        s = std::move(_s);
+        k = _k;
+        n = s.size();
+
+        int cnt[26] = {0};
+        for(char c : s)
+        {
+            ++cnt[c - 'a'];
+        }
+
+        for(char c = 'z'; c >= 'a'; --c)
+        {
+            if(cnt[c - 'a'] >= k)
+            {
+                letters.push_back(c);
+            }
+
+        }
+        string cur;
+        dfs(cur);
+        return best;
+    }
+};
